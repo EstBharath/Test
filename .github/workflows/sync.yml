@@ -1,0 +1,28 @@
+name: Push changes from private to public repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v2
+        with:
+          repository: EstBharath/EstTest.git
+          ref: main
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+
+      - name: Push changes to public repo
+        run: |
+          git config --global user.name "EstBharath"
+          git config --global user.email "bharath.kumar@estuate.com"
+          git config pull.rebase true
+          git fetch origin
+          git fetch https://github.com/EstBharath/Test.git
+          git pull --allow-unrelated-histories https://github.com/EstBharath/Test.git
+          git push https://github.com/EstBharath/Test.git HEAD:main
